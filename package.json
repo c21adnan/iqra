@@ -12,5 +12,10 @@
     "react": "latest",
     "react-dom": "latest",
     "tailwindcss": "latest"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "sharp"
+    ]
   }
 }
