@@ -14,9 +14,13 @@ export default function LeadCaptureForm() {
   const [status, setStatus] = useState("");
 
   useEffect(() => {
-    const saved = window.localStorage.getItem("iqra-leads");
-    if (saved) {
-      setLeads(JSON.parse(saved));
+    try {
+      const saved = window.localStorage?.getItem("iqra-leads");
+      if (saved) {
+        setLeads(JSON.parse(saved));
+      }
+    } catch {
+      setStatus("Browser storage is unavailable, so leads will stay in this page session only.");
     }
   }, []);
 
@@ -32,13 +36,17 @@ export default function LeadCaptureForm() {
 
     const lead = {
       ...form,
-      id: crypto.randomUUID(),
+      id: crypto.randomUUID?.() || `${Date.now()}-${form.email}`,
       createdAt: new Date().toISOString(),
     };
     const nextLeads = [lead, ...leads].slice(0, 5);
 
     setLeads(nextLeads);
-    window.localStorage.setItem("iqra-leads", JSON.stringify(nextLeads));
+    try {
+      window.localStorage?.setItem("iqra-leads", JSON.stringify(nextLeads));
+    } catch {
+      // Some browsers block storage in embedded contexts; the in-page state still proves the funnel flow.
+    }
     setForm(initialForm);
     setStatus("Lead captured in this browser. Next we can connect this to Brevo, Mailchimp, HubSpot, or a cPanel PHP handler.");
   }
