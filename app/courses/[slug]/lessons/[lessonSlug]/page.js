@@ -10,9 +10,10 @@ export function generateStaticParams() {
   );
 }
 
-export default function LessonPage({ params }) {
-  const course = getCourse(params.slug);
-  const lesson = getLesson(params.slug, params.lessonSlug);
+export default async function LessonPage({ params }) {
+  const { slug, lessonSlug } = await params;
+  const course = getCourse(slug);
+  const lesson = getLesson(slug, lessonSlug);
   const nextLesson = course && lesson ? getNextLesson(course, lesson.slug) : undefined;
 
   if (!course || !lesson) {
