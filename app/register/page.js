@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AuthSignupButton } from "../components/AuthActions";
 
 const fields = ["Full name", "Email address", "Workspace name"];
 
@@ -37,12 +38,11 @@ export default function RegisterPage() {
               </label>
             ))}
           </div>
-          <Link
+          <AuthSignupButton
             className="mt-6 block rounded-xl bg-[#173f35] px-5 py-3 text-center text-sm font-semibold text-white"
-            href="/account/"
           >
-            Create demo account
-          </Link>
+            Create account
+          </AuthSignupButton>
           <p className="mt-5 text-sm text-black/50">
             Already have access?{" "}
             <Link className="font-semibold text-[#173f35]" href="/login/">

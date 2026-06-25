@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AuthGate } from "../components/AuthActions";
 import { accessRules, authSteps, demoMember } from "../lib/account";
 import { courses } from "../lib/courses";
 
@@ -8,7 +9,7 @@ export default function AccountPage() {
       <Link className="text-sm font-semibold text-[#173f35]" href="/dashboard/">
         Back to dashboard
       </Link>
-
+      <AuthGate>
       <section className="mt-10 grid gap-8 lg:grid-cols-[420px_1fr]">
         <aside className="rounded-[2rem] border border-black/10 bg-white p-6 shadow-sm">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#b15e35]">Member profile</p>
@@ -80,6 +81,7 @@ export default function AccountPage() {
           </section>
         </div>
       </section>
+      </AuthGate>
     </main>
   );
 }

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AuthSignupButton } from "../components/AuthActions";
 
 const plans = [
   ["Starter", "$29", "Website, email capture, basic course hosting"],
@@ -29,9 +30,9 @@ export default function PricingPage() {
             <p className="mt-5 text-5xl font-semibold tracking-[-0.05em]">{price}</p>
             <p className="mt-1 text-sm text-black/40">per month</p>
             <p className="mt-6 min-h-16 leading-7 text-black/55">{description}</p>
-            <Link className="mt-6 block w-full rounded-xl bg-[#173f35] px-5 py-3 text-center text-sm font-semibold text-white" href="/register/">
+            <AuthSignupButton className="mt-6 block w-full rounded-xl bg-[#173f35] px-5 py-3 text-center text-sm font-semibold text-white">
               Choose {name}
-            </Link>
+            </AuthSignupButton>
           </article>
         ))}
       </section>

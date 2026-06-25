@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { demoMember } from "../lib/account";
+import { AuthGate, AuthMemberBadge } from "../components/AuthActions";
 import { courses } from "../lib/courses";
 
 const metrics = [
@@ -21,10 +21,9 @@ export default function DashboardPage() {
         <Link className="text-sm font-semibold text-[#173f35]" href="/">
           Back to home
         </Link>
-        <Link className="rounded-full border border-black/10 bg-white px-4 py-2 text-sm font-semibold text-[#173f35]" href="/account/">
-          Signed in as {demoMember.name}
-        </Link>
+        <AuthMemberBadge />
       </div>
+      <AuthGate>
       <section className="mt-10 flex flex-col justify-between gap-5 rounded-[2rem] bg-[#173f35] p-8 text-white md:flex-row md:items-end">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-white/55">Protected dashboard preview</p>
@@ -111,6 +110,7 @@ export default function DashboardPage() {
           </Link>
         </div>
       </section>
+      </AuthGate>
     </main>
   );
 }

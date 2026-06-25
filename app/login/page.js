@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { demoMember } from "../lib/account";
+import { AuthLoginPanel } from "../components/AuthActions";
 
 export default function LoginPage() {
   return (
@@ -17,36 +17,7 @@ export default function LoginPage() {
       </section>
 
       <section className="rounded-[2rem] border border-black/10 bg-white p-6 shadow-xl shadow-[#173f35]/5">
-        <div className="rounded-3xl bg-[#f7f7f2] p-5">
-          <p className="text-sm font-semibold text-black/45">Demo account</p>
-          <p className="mt-2 text-2xl font-semibold">{demoMember.email}</p>
-          <p className="mt-1 text-sm text-black/50">Password: connect-auth-next</p>
-        </div>
-
-        <form className="mt-6 grid gap-4">
-          <label className="grid gap-2 text-sm font-semibold">
-            Email
-            <input
-              className="rounded-xl border border-black/10 bg-[#f7f7f2] px-4 py-3 font-normal outline-none"
-              defaultValue={demoMember.email}
-              type="email"
-            />
-          </label>
-          <label className="grid gap-2 text-sm font-semibold">
-            Password
-            <input
-              className="rounded-xl border border-black/10 bg-[#f7f7f2] px-4 py-3 font-normal outline-none"
-              defaultValue="connect-auth-next"
-              type="password"
-            />
-          </label>
-          <Link
-            className="mt-2 rounded-xl bg-[#173f35] px-5 py-3 text-center text-sm font-semibold text-white"
-            href="/dashboard/"
-          >
-            Continue to dashboard
-          </Link>
-        </form>
+        <AuthLoginPanel />
 
         <p className="mt-6 text-center text-sm text-black/50">
           New here?{" "}
