@@ -104,6 +104,9 @@ export default function DashboardPage() {
           <Link className="rounded-xl bg-[#173f35] px-5 py-3 text-sm font-semibold text-white" href="/funnel/">
             View funnel
           </Link>
+          <Link className="rounded-xl border border-black/15 px-5 py-3 text-sm font-semibold text-[#173f35]" href="/leads-admin.php">
+            Leads admin
+          </Link>
         </div>
       </section>
 
