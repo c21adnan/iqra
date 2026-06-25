@@ -29,9 +29,9 @@ export default function PricingPage() {
             <p className="mt-5 text-5xl font-semibold tracking-[-0.05em]">{price}</p>
             <p className="mt-1 text-sm text-black/40">per month</p>
             <p className="mt-6 min-h-16 leading-7 text-black/55">{description}</p>
-            <button className="mt-6 w-full rounded-xl bg-[#173f35] px-5 py-3 text-sm font-semibold text-white">
+            <Link className="mt-6 block w-full rounded-xl bg-[#173f35] px-5 py-3 text-center text-sm font-semibold text-white" href="/register/">
               Choose {name}
-            </button>
+            </Link>
           </article>
         ))}
       </section>

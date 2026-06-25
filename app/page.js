@@ -35,8 +35,8 @@ export default function Home() {
             payments, email, funnels, and analytics in one calm operating system.
           </p>
           <div className="mt-9 flex flex-wrap gap-3">
-            <Link className="rounded-xl bg-[#173f35] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[#173f35]/15" href="/dashboard/">
-              Preview dashboard
+            <Link className="rounded-xl bg-[#173f35] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-[#173f35]/15" href="/register/">
+              Create your workspace
             </Link>
             <Link className="rounded-xl border border-black/15 bg-white px-5 py-3 text-sm font-semibold" href="/courses/">
               Explore courses
@@ -115,10 +115,14 @@ function Header() {
           <Link href="/courses/">Courses</Link>
           <Link href="/pricing/">Pricing</Link>
           <Link href="/dashboard/">Dashboard</Link>
+          <Link href="/account/">Account</Link>
         </nav>
-        <span className="rounded-full border border-[#173f35]/20 bg-white px-4 py-2 text-xs font-semibold text-[#173f35]">
-          GitHub deploy live
-        </span>
+        <Link
+          className="rounded-full border border-[#173f35]/20 bg-white px-4 py-2 text-xs font-semibold text-[#173f35]"
+          href="/login/"
+        >
+          Sign in
+        </Link>
       </div>
     </header>
   );

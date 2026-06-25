@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { demoMember } from "../lib/account";
 import { courses } from "../lib/courses";
 
 const metrics = [
@@ -16,15 +17,20 @@ export default function DashboardPage() {
 
   return (
     <main className="mx-auto max-w-7xl px-6 py-12">
-      <Link className="text-sm font-semibold text-[#173f35]" href="/">
-        Back to home
-      </Link>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <Link className="text-sm font-semibold text-[#173f35]" href="/">
+          Back to home
+        </Link>
+        <Link className="rounded-full border border-black/10 bg-white px-4 py-2 text-sm font-semibold text-[#173f35]" href="/account/">
+          Signed in as {demoMember.name}
+        </Link>
+      </div>
       <section className="mt-10 flex flex-col justify-between gap-5 rounded-[2rem] bg-[#173f35] p-8 text-white md:flex-row md:items-end">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-white/55">Student dashboard preview</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-white/55">Protected dashboard preview</p>
           <h1 className="mt-4 text-5xl font-semibold tracking-[-0.05em]">Learning, revenue, and growth in one view.</h1>
           <p className="mt-4 max-w-2xl leading-7 text-white/65">
-            This dashboard now connects to the course catalog, showing learner progress, next lessons, and launch tasks.
+            This dashboard now connects to the course catalog and account center, showing what a signed-in member will see.
           </p>
         </div>
         <Link
@@ -87,6 +93,22 @@ export default function DashboardPage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="mt-8 rounded-3xl border border-black/10 bg-white p-6">
+        <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#b15e35]">Auth layer</p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-[-0.03em]">Ready to connect real login.</h2>
+            <p className="mt-2 max-w-2xl text-black/55">
+              The current experience is a static member flow. Clerk or Auth0 can replace the demo account and protect
+              this dashboard, lessons, and account page.
+            </p>
+          </div>
+          <Link className="rounded-xl bg-[#173f35] px-5 py-3 text-sm font-semibold text-white" href="/login/">
+            View login flow
+          </Link>
         </div>
       </section>
     </main>
