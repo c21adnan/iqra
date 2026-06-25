@@ -9,7 +9,7 @@ const metrics = [
   ["Captured Leads", "312", "from funnel opt-ins"],
 ];
 
-const tasks = ["Publish builder pages", "Connect Stripe plan", "Test lead funnel", "Review analytics"];
+const tasks = ["Publish builder pages", "Map membership access", "Test lead funnel", "Review analytics"];
 
 export default function DashboardPage() {
   return (
@@ -121,6 +121,21 @@ export default function DashboardPage() {
           </Link>
           <Link className="rounded-xl border border-black/15 px-5 py-3 text-sm font-semibold text-[#173f35]" href="/leads-admin.php">
             Leads admin
+          </Link>
+        </div>
+      </section>
+
+      <section className="mt-8 rounded-3xl border border-black/10 bg-white p-6">
+        <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#b15e35]">Memberships</p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-[-0.03em]">Plans, access rules, and protected assets are mapped.</h2>
+            <p className="mt-2 max-w-2xl text-black/55">
+              Connect plans to courses, downloads, workshops, and account access.
+            </p>
+          </div>
+          <Link className="rounded-xl bg-[#173f35] px-5 py-3 text-sm font-semibold text-white" href="/memberships/">
+            View memberships
           </Link>
         </div>
       </section>
