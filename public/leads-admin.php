@@ -3,8 +3,13 @@ declare(strict_types=1);
 
 session_start();
 
-$passwordHash = getenv('IQRA_ADMIN_PASSWORD_HASH') ?: '';
+$configPath = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'iqra-admin-config.php';
 $storagePath = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'iqra-leads.csv';
+$passwordHash = getenv('IQRA_ADMIN_PASSWORD_HASH') ?: '';
+if ($passwordHash === '' && file_exists($configPath)) {
+    $storedHash = require $configPath;
+    $passwordHash = is_string($storedHash) ? $storedHash : '';
+}
 $isConfigured = $passwordHash !== '';
 $error = '';
 
@@ -33,7 +38,27 @@ function read_leads(string $storagePath): array
     return $rows;
 }
 
-if ($isConfigured && $_SERVER['REQUEST_METHOD'] === 'POST') {
+if (!$isConfigured && $_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['mode'] ?? '') === 'setup') {
+    $password = (string) ($_POST['password'] ?? '');
+    $confirmPassword = (string) ($_POST['confirm_password'] ?? '');
+
+    if (strlen($password) < 10) {
+        $error = 'Use at least 10 characters for the admin password.';
+    } elseif ($password !== $confirmPassword) {
+        $error = 'The two password entries do not match.';
+    } else {
+        $newHash = password_hash($password, PASSWORD_DEFAULT);
+        $configBody = "<?php\nreturn " . var_export($newHash, true) . ";\n";
+        if (file_put_contents($configPath, $configBody, LOCK_EX) !== false) {
+            $_SESSION['iqra_admin'] = true;
+            header('Location: /leads-admin.php');
+            exit;
+        }
+        $error = 'The password is valid, but the server could not create the private admin config file.';
+    }
+}
+
+if ($isConfigured && $_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['mode'] ?? '') === 'login') {
     $password = (string) ($_POST['password'] ?? '');
     if (password_verify($password, $passwordHash)) {
         $_SESSION['iqra_admin'] = true;
@@ -123,15 +148,20 @@ $recentLeads = array_reverse(array_slice($leads, -25));
 
         <?php if (!$isConfigured): ?>
           <section class="card" style="margin-top: 24px;">
-            <p class="kicker">Setup required</p>
-            <h2>Admin password is not configured yet.</h2>
+            <p class="kicker">First-time setup</p>
+            <h2>Create the admin password.</h2>
+            <?php if ($error !== ''): ?>
+              <p class="error"><?php echo h($error); ?></p>
+            <?php endif; ?>
             <p>
-              Add an environment variable named <code>IQRA_ADMIN_PASSWORD_HASH</code> in cPanel for this domain.
-              Generate the value with PHP's <code>password_hash</code>, then reload this page.
+              The password hash will be saved to a private PHP config file outside the public website folder, so it will not be stored in GitHub.
             </p>
-            <p>
-              This page is intentionally closed until that server-side hash exists, so the public GitHub repo never contains your admin password.
-            </p>
+            <form method="post" action="/leads-admin.php">
+              <input type="hidden" name="mode" value="setup">
+              <input type="password" name="password" placeholder="Create admin password" required minlength="10">
+              <input type="password" name="confirm_password" placeholder="Confirm admin password" required minlength="10">
+              <button type="submit">Create admin password</button>
+            </form>
           </section>
         <?php elseif (!$isLoggedIn): ?>
           <section class="card" style="margin-top: 24px;">
@@ -141,6 +171,7 @@ $recentLeads = array_reverse(array_slice($leads, -25));
               <p class="error"><?php echo h($error); ?></p>
             <?php endif; ?>
             <form method="post" action="/leads-admin.php">
+              <input type="hidden" name="mode" value="login">
               <input type="password" name="password" placeholder="Admin password" required>
               <button type="submit">Open leads admin</button>
             </form>
