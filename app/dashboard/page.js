@@ -9,12 +9,9 @@ const metrics = [
   ["Email Growth", "9,430", "total subscribers"],
 ];
 
-const tasks = ["Publish course catalog", "Connect Stripe plan", "Write welcome email", "Add protected lesson access"];
+const tasks = ["Publish course catalog", "Connect Stripe plan", "Test lead funnel", "Add protected lesson access"];
 
 export default function DashboardPage() {
-  const nextCourse = courses[0];
-  const nextLesson = nextCourse.lessons[1];
-
   return (
     <main className="mx-auto max-w-7xl px-6 py-12">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -34,9 +31,9 @@ export default function DashboardPage() {
         </div>
         <Link
           className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#173f35]"
-          href={`/courses/${nextCourse.slug}/lessons/${nextLesson.slug}/`}
+          href="/funnel/"
         >
-          Continue lesson
+          Open funnel
         </Link>
       </section>
 
@@ -92,6 +89,21 @@ export default function DashboardPage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="mt-8 rounded-3xl border border-black/10 bg-white p-6">
+        <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#b15e35]">Funnel module</p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-[-0.03em]">Lead capture is now part of the workspace.</h2>
+            <p className="mt-2 max-w-2xl text-black/55">
+              Test the opt-in form, preview the welcome emails, and route interested visitors toward pricing.
+            </p>
+          </div>
+          <Link className="rounded-xl bg-[#173f35] px-5 py-3 text-sm font-semibold text-white" href="/funnel/">
+            View funnel
+          </Link>
         </div>
       </section>
 

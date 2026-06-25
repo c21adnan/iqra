@@ -41,6 +41,9 @@ export default function Home() {
             <Link className="rounded-xl border border-black/15 bg-white px-5 py-3 text-sm font-semibold" href="/courses/">
               Explore courses
             </Link>
+            <Link className="rounded-xl border border-black/15 bg-white px-5 py-3 text-sm font-semibold" href="/funnel/">
+              Test funnel
+            </Link>
           </div>
         </div>
 
@@ -113,6 +116,7 @@ function Header() {
         </Link>
         <nav className="hidden items-center gap-6 text-sm font-semibold text-black/60 md:flex">
           <Link href="/courses/">Courses</Link>
+          <Link href="/funnel/">Funnel</Link>
           <Link href="/pricing/">Pricing</Link>
           <Link href="/dashboard/">Dashboard</Link>
           <Link href="/account/">Account</Link>
