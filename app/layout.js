@@ -1,8 +1,8 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "BREU | Creator Platform",
-  description: "The all-in-one platform for digital businesses.",
+  title: "IQRA | Creator Platform",
+  description: "An all-in-one platform for courses, memberships, funnels, and payments.",
 };
 
 export default function RootLayout({ children }) {
