@@ -1,11 +1,5 @@
 import Link from "next/link";
-import { AuthSignupButton } from "../components/AuthActions";
-
-const plans = [
-  ["Starter", "$29", "Website, email capture, basic course hosting"],
-  ["Growth", "$79", "Funnels, memberships, automations, analytics"],
-  ["Scale", "$149", "Team access, advanced reporting, priority support"],
-];
+import { plans } from "../lib/plans";
 
 export default function PricingPage() {
   return (
@@ -14,25 +8,46 @@ export default function PricingPage() {
         Back to home
       </Link>
       <section className="mt-10 text-center">
-        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#b15e35]">Pricing draft</p>
+        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#b15e35]">Stripe-ready pricing</p>
         <h1 className="mx-auto mt-4 max-w-3xl text-5xl font-semibold tracking-[-0.05em]">
-          Simple plans for creators building real digital businesses.
+          Choose a plan and prepare checkout.
         </h1>
         <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-black/60">
-          These are placeholder packages so we can shape the business model before connecting Stripe.
+          These plans now route to checkout pages. Stripe Payment Links can be added as public GitHub variables when
+          you are ready to accept payments.
         </p>
       </section>
 
       <section className="mt-10 grid gap-4 md:grid-cols-3">
-        {plans.map(([name, price, description]) => (
-          <article key={name} className="rounded-3xl border border-black/10 bg-white p-6 shadow-sm">
-            <h2 className="text-2xl font-semibold">{name}</h2>
-            <p className="mt-5 text-5xl font-semibold tracking-[-0.05em]">{price}</p>
-            <p className="mt-1 text-sm text-black/40">per month</p>
-            <p className="mt-6 min-h-16 leading-7 text-black/55">{description}</p>
-            <AuthSignupButton className="mt-6 block w-full rounded-xl bg-[#173f35] px-5 py-3 text-center text-sm font-semibold text-white">
-              Choose {name}
-            </AuthSignupButton>
+        {plans.map((plan) => (
+          <article
+            key={plan.slug}
+            className={`rounded-3xl border bg-white p-6 shadow-sm ${
+              plan.featured ? "border-[#173f35] shadow-xl shadow-[#173f35]/10" : "border-black/10"
+            }`}
+          >
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="text-2xl font-semibold">{plan.name}</h2>
+              {plan.featured ? (
+                <span className="rounded-full bg-[#f7f7f2] px-3 py-1 text-xs font-semibold text-[#173f35]">Popular</span>
+              ) : null}
+            </div>
+            <p className="mt-5 text-5xl font-semibold tracking-[-0.05em]">{plan.price}</p>
+            <p className="mt-1 text-sm text-black/40">{plan.interval}</p>
+            <p className="mt-6 min-h-20 leading-7 text-black/55">{plan.description}</p>
+            <div className="mt-6 grid gap-2">
+              {plan.features.slice(0, 3).map((feature) => (
+                <p key={feature} className="rounded-2xl bg-[#f7f7f2] px-4 py-3 text-sm text-black/60">
+                  {feature}
+                </p>
+              ))}
+            </div>
+            <Link
+              className="mt-6 block w-full rounded-xl bg-[#173f35] px-5 py-3 text-center text-sm font-semibold text-white"
+              href={`/checkout/${plan.slug}/`}
+            >
+              Checkout {plan.name}
+            </Link>
           </article>
         ))}
       </section>
