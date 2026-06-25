@@ -31,8 +31,11 @@ export default function LeadCaptureForm() {
     }));
   }
 
-  function handleSubmit(event) {
-    event.preventDefault();
+  function captureLead() {
+    if (!form.name || !form.email) {
+      setStatus("Add a name and email to capture the lead.");
+      return;
+    }
 
     const lead = {
       ...form,
@@ -49,6 +52,11 @@ export default function LeadCaptureForm() {
     }
     setForm(initialForm);
     setStatus("Lead captured in this browser. Next we can connect this to Brevo, Mailchimp, HubSpot, or a cPanel PHP handler.");
+  }
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    captureLead();
   }
 
   return (
@@ -101,7 +109,11 @@ export default function LeadCaptureForm() {
           </label>
         </div>
 
-        <button className="mt-6 w-full rounded-xl bg-[#173f35] px-5 py-3 text-sm font-semibold text-white" type="submit">
+        <button
+          className="mt-6 w-full rounded-xl bg-[#173f35] px-5 py-3 text-sm font-semibold text-white"
+          onClick={captureLead}
+          type="button"
+        >
           Capture lead
         </button>
         {status ? <p className="mt-4 rounded-2xl bg-[#f7f7f2] p-4 text-sm leading-6 text-[#173f35]">{status}</p> : null}
