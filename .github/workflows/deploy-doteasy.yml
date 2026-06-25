@@ -35,6 +35,9 @@ jobs:
         run: pnpm install --no-frozen-lockfile --dangerously-allow-all-builds
 
       - name: Build static site
+        env:
+          NEXT_PUBLIC_AUTH0_CLIENT_ID: ${{ vars.NEXT_PUBLIC_AUTH0_CLIENT_ID }}
+          NEXT_PUBLIC_AUTH0_DOMAIN: ${{ vars.NEXT_PUBLIC_AUTH0_DOMAIN }}
         run: pnpm build
 
       - name: Deploy exported site over FTPS
