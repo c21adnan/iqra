@@ -117,6 +117,7 @@ function Header() {
         <nav className="hidden items-center gap-6 text-sm font-semibold text-black/60 md:flex">
           <Link href="/courses/">Courses</Link>
           <Link href="/funnel/">Funnel</Link>
+          <Link href="/analytics/">Analytics</Link>
           <Link href="/pricing/">Pricing</Link>
           <Link href="/dashboard/">Dashboard</Link>
           <Link href="/account/">Account</Link>
