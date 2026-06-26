@@ -12,29 +12,51 @@ $name = clean_text($_POST['name'] ?? '');
 $email = filter_var(trim((string) ($_POST['email'] ?? '')), FILTER_VALIDATE_EMAIL);
 $goal = clean_text($_POST['goal'] ?? '');
 $source = clean_text($_POST['source'] ?? 'iqra-funnel');
+$consent = ($_POST['consent'] ?? '') === 'yes';
+$honeypot = clean_text($_POST['website'] ?? '');
 
 $ok = false;
 $message = 'Please go back and enter a valid name and email address.';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $name !== '' && $email !== false) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $honeypot !== '') {
+    $ok = true;
+    $message = 'You are on the IQRA launch list.';
+} elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && $name !== '' && $email !== false && $consent) {
     $storagePath = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'iqra-leads.csv';
     $isNewFile = !file_exists($storagePath);
-    $handle = fopen($storagePath, 'ab');
+    $handle = fopen($storagePath, 'c+b');
 
     if ($handle !== false) {
         flock($handle, LOCK_EX);
+        $emailExists = false;
+
+        rewind($handle);
+        while (($row = fgetcsv($handle)) !== false) {
+            if (isset($row[2]) && strtolower(trim((string) $row[2])) === strtolower((string) $email)) {
+                $emailExists = true;
+                break;
+            }
+        }
+
+        fseek($handle, 0, SEEK_END);
         if ($isNewFile) {
             fputcsv($handle, ['created_at', 'name', 'email', 'goal', 'source', 'ip']);
         }
-        fputcsv($handle, [gmdate('c'), $name, $email, $goal, $source, $_SERVER['REMOTE_ADDR'] ?? '']);
+        if (!$emailExists) {
+            fputcsv($handle, [gmdate('c'), $name, strtolower((string) $email), $goal, $source, $_SERVER['REMOTE_ADDR'] ?? '']);
+        }
         flock($handle, LOCK_UN);
         fclose($handle);
 
         $ok = true;
-        $message = 'You are on the IQRA launch list. The lead was captured successfully.';
+        $message = $emailExists
+            ? 'This email is already on the IQRA launch list, so no duplicate was added.'
+            : 'You are on the IQRA launch list. The lead was captured successfully.';
     } else {
         $message = 'The form is working, but the server could not open the lead storage file.';
     }
+} elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && !$consent) {
+    $message = 'Please confirm that you agree to receive IQRA emails.';
 }
 
 http_response_code($ok ? 200 : 400);
