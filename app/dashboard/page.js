@@ -143,6 +143,21 @@ export default function DashboardPage() {
       <section className="mt-8 rounded-3xl border border-black/10 bg-white p-6">
         <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
           <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#b15e35]">Email marketing</p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-[-0.03em]">Campaigns, segments, and automations are mapped.</h2>
+            <p className="mt-2 max-w-2xl text-black/55">
+              Guide leads from their first opt-in through onboarding, course discovery, and membership offers.
+            </p>
+          </div>
+          <Link className="rounded-xl bg-[#173f35] px-5 py-3 text-sm font-semibold text-white" href="/email/">
+            Open email
+          </Link>
+        </div>
+      </section>
+
+      <section className="mt-8 rounded-3xl border border-black/10 bg-white p-6">
+        <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+          <div>
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#b15e35]">Analytics layer</p>
             <h2 className="mt-2 text-2xl font-semibold tracking-[-0.03em]">Funnel and course reporting is mapped.</h2>
             <p className="mt-2 max-w-2xl text-black/55">

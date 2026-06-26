@@ -47,6 +47,9 @@ export default function Home() {
             <Link className="rounded-xl border border-black/15 bg-white px-5 py-3 text-sm font-semibold" href="/memberships/">
               View memberships
             </Link>
+            <Link className="rounded-xl border border-black/15 bg-white px-5 py-3 text-sm font-semibold" href="/email/">
+              Open email
+            </Link>
             <Link className="rounded-xl border border-black/15 bg-white px-5 py-3 text-sm font-semibold" href="/funnel/">
               Test funnel
             </Link>
@@ -124,6 +127,7 @@ function Header() {
           <Link href="/builder/">Builder</Link>
           <Link href="/courses/">Courses</Link>
           <Link href="/memberships/">Memberships</Link>
+          <Link href="/email/">Email</Link>
           <Link href="/funnel/">Funnel</Link>
           <Link href="/analytics/">Analytics</Link>
           <Link href="/pricing/">Pricing</Link>
