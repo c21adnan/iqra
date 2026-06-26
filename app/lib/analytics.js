@@ -34,7 +34,7 @@ export const funnelStages = [
 ];
 
 export const dataConnections = [
-  ["Lead CSV", "Ready", "Read opt-ins from the cPanel CSV created by the funnel form."],
+  ["Lead CSV", "Live", "Aggregate opt-in totals now come from the cPanel CSV without exposing subscriber details."],
   ["Stripe", "Pending", "Connect checkout events after Stripe Payment Links are added."],
   ["Auth0", "Pending", "Use signed-in users to measure members, retention, and account activity."],
   ["Courses", "Preview", "Static course progress is modeled and ready for database-backed tracking."],

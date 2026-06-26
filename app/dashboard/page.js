@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AuthGate, AuthMemberBadge } from "../components/AuthActions";
+import LiveLeadMetric from "../components/LiveLeadMetric";
 import { courses } from "../lib/courses";
 
 const metrics = [
@@ -41,8 +42,14 @@ export default function DashboardPage() {
         {metrics.map(([label, value, note]) => (
           <article key={label} className="rounded-2xl border border-black/10 bg-white p-6">
             <p className="text-sm text-black/50">{label}</p>
-            <p className="mt-3 text-3xl font-semibold">{value}</p>
-            <p className="mt-2 text-sm text-[#b15e35]">{note}</p>
+            {label === "Captured Leads" ? (
+              <LiveLeadMetric fallback={value} note={note} />
+            ) : (
+              <>
+                <p className="mt-3 text-3xl font-semibold">{value}</p>
+                <p className="mt-2 text-sm text-[#b15e35]">{note}</p>
+              </>
+            )}
           </article>
         ))}
       </section>

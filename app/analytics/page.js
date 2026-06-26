@@ -1,4 +1,5 @@
 import Link from "next/link";
+import LiveLeadMetric from "../components/LiveLeadMetric";
 import { analyticsOverview, dataConnections, funnelStages, weeklyActivity } from "../lib/analytics";
 
 const maxActivity = Math.max(...weeklyActivity.map(([, value]) => value));
@@ -17,7 +18,8 @@ export default function AnalyticsPage() {
         </h1>
         <p className="mt-5 max-w-2xl leading-7 text-white/65">
           This dashboard gives IQRA a reporting layer for leads, pricing interest, checkout starts, and course progress.
-          Today it uses modeled data; next it can connect to the lead CSV, Stripe, Auth0, and course records.
+          Lead totals now come from the live cPanel capture file; the remaining preview metrics are ready to connect to
+          Stripe, Auth0, and course records.
         </p>
       </section>
 
@@ -30,8 +32,14 @@ export default function AnalyticsPage() {
                 {metric.change}
               </span>
             </div>
-            <p className="mt-4 text-4xl font-semibold tracking-[-0.04em]">{metric.value}</p>
-            <p className="mt-2 text-sm text-black/45">{metric.note}</p>
+            {metric.label === "Captured leads" ? (
+              <LiveLeadMetric fallback={metric.value} note={metric.note} />
+            ) : (
+              <>
+                <p className="mt-4 text-4xl font-semibold tracking-[-0.04em]">{metric.value}</p>
+                <p className="mt-2 text-sm text-black/45">{metric.note}</p>
+              </>
+            )}
           </article>
         ))}
       </section>
