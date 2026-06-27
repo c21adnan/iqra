@@ -22,6 +22,12 @@ export default function StudioPage() {
             <Link className="rounded-xl bg-[#173f35] px-5 py-3 text-sm font-semibold text-white" href="/courses/">
               Preview student catalog
             </Link>
+            <Link
+              className="rounded-xl border border-black/15 bg-white px-5 py-3 text-sm font-semibold text-[#173f35]"
+              href="/database-admin.php"
+            >
+              Database setup
+            </Link>
             <a
               className="rounded-xl border border-black/15 bg-white px-5 py-3 text-sm font-semibold text-[#173f35]"
               href="#implementation"
@@ -151,6 +157,11 @@ export default function StudioPage() {
               </span>
             </div>
           ))}
+        </div>
+        <div className="mt-6">
+          <Link className="inline-block rounded-xl bg-[#173f35] px-5 py-3 text-sm font-semibold text-white" href="/database-admin.php">
+            Open protected database setup
+          </Link>
         </div>
       </section>
     </main>

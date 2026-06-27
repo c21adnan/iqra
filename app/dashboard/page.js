@@ -111,6 +111,9 @@ export default function DashboardPage() {
           <Link className="rounded-xl bg-[#173f35] px-5 py-3 text-sm font-semibold text-white" href="/studio/">
             Open studio
           </Link>
+          <Link className="rounded-xl border border-black/15 px-5 py-3 text-sm font-semibold text-[#173f35]" href="/database-admin.php">
+            Database setup
+          </Link>
         </div>
       </section>
 
