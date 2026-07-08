@@ -58,9 +58,14 @@ export default function DashboardPage() {
         <div className="rounded-3xl border border-black/10 bg-white p-6">
           <div className="flex items-center justify-between gap-4">
             <h2 className="text-2xl font-semibold tracking-[-0.03em]">Active courses</h2>
-            <Link className="text-sm font-semibold text-[#173f35]" href="/courses/">
-              View catalog
-            </Link>
+            <div className="flex flex-wrap gap-3">
+              <Link className="text-sm font-semibold text-[#173f35]" href="/creator/">
+                My Courses
+              </Link>
+              <Link className="text-sm font-semibold text-[#173f35]" href="/courses/">
+                View catalog
+              </Link>
+            </div>
           </div>
           <div className="mt-5 grid gap-3">
             {courses.map((course) => (

@@ -24,7 +24,10 @@ const storageKey = "iqra_creator_workspace_course";
 
 export default function CourseWorkspace() {
   const [course, setCourse] = useState(starterCourse);
+  const [courses, setCourses] = useState([]);
   const [savedAt, setSavedAt] = useState("");
+  const [serverMessage, setServerMessage] = useState("Checking server storage...");
+  const [serverReady, setServerReady] = useState(false);
   const [activeModule, setActiveModule] = useState(0);
 
   useEffect(() => {
@@ -36,7 +39,31 @@ export default function CourseWorkspace() {
     } catch {
       setCourse(starterCourse);
     }
+    loadServerCourses();
   }, []);
+
+  async function loadServerCourses() {
+    try {
+      const response = await fetch("/course-api.php", { cache: "no-store" });
+      const data = await response.json();
+      if (!response.ok || !data.ok) {
+        setServerReady(false);
+        setServerMessage(data.message || "Server storage is locked. Sign in through leads admin to enable saving.");
+        return;
+      }
+      const savedCourses = Array.isArray(data.courses) ? data.courses : [];
+      setCourses(savedCourses);
+      setServerReady(true);
+      setServerMessage(savedCourses.length > 0 ? "Server storage connected." : "Server storage connected. No saved courses yet.");
+      if (savedCourses.length > 0) {
+        setCourse(savedCourses[0]);
+        setActiveModule(0);
+      }
+    } catch {
+      setServerReady(false);
+      setServerMessage("Server storage is unavailable, so drafts are saved only in this browser for now.");
+    }
+  }
 
   const lessonCount = useMemo(
     () => course.modules.reduce((total, module) => total + module.lessons.length, 0),
@@ -122,6 +149,32 @@ export default function CourseWorkspace() {
     setSavedAt(new Date().toLocaleString());
   }
 
+  async function saveToServer() {
+    window.localStorage.setItem(storageKey, JSON.stringify(course));
+    setServerMessage("Saving course to server...");
+    try {
+      const response = await fetch("/course-api.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ course }),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.ok) {
+        setServerReady(false);
+        setServerMessage(data.message || "The server could not save this course.");
+        return;
+      }
+      setCourse(data.course);
+      setCourses(Array.isArray(data.courses) ? data.courses : [data.course]);
+      setServerReady(true);
+      setServerMessage("Course saved to server.");
+      setSavedAt(new Date().toLocaleString());
+    } catch {
+      setServerReady(false);
+      setServerMessage("The server save failed. Your browser draft is still safe locally.");
+    }
+  }
+
   function resetDraft() {
     window.localStorage.removeItem(storageKey);
     setCourse(starterCourse);
@@ -165,8 +218,11 @@ export default function CourseWorkspace() {
             <StatusLine label="Status" value={course.status} />
           </div>
           <div className="mt-6 flex flex-wrap gap-3">
+            <button className="rounded-xl bg-[#dc9b68] px-4 py-2 text-sm font-semibold text-[#173f35]" onClick={saveToServer}>
+              Save to server
+            </button>
             <button className="rounded-xl bg-white px-4 py-2 text-sm font-semibold text-[#173f35]" onClick={saveDraft}>
-              Save draft
+              Save local
             </button>
             <button className="rounded-xl border border-white/25 px-4 py-2 text-sm font-semibold text-white" onClick={resetDraft}>
               Reset
@@ -174,6 +230,51 @@ export default function CourseWorkspace() {
           </div>
           {savedAt ? <p className="mt-4 text-xs text-white/60">Saved {savedAt}</p> : null}
         </aside>
+      </section>
+
+      <section className="grid gap-4 rounded-3xl border border-black/10 bg-white p-5 lg:grid-cols-[320px_1fr]">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#8f4322]">Server storage</p>
+          <h2 className="mt-2 text-2xl font-semibold tracking-[-0.03em]">{serverReady ? "Connected" : "Locked or unavailable"}</h2>
+          <p className="mt-2 text-sm leading-6 text-black/60">{serverMessage}</p>
+          {!serverReady ? (
+            <a className="mt-4 inline-block rounded-xl bg-[#173f35] px-4 py-2 text-sm font-semibold text-white" href="/leads-admin.php">
+              Admin sign-in
+            </a>
+          ) : null}
+        </div>
+        <div>
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-xl font-semibold">My Courses</h2>
+            <button className="rounded-xl border border-black/10 bg-[#f7f7f2] px-3 py-2 text-sm font-semibold text-[#173f35]" onClick={loadServerCourses}>
+              Refresh
+            </button>
+          </div>
+          <div className="mt-3 grid gap-2">
+            {courses.length === 0 ? (
+              <p className="rounded-2xl bg-[#f7f7f2] p-4 text-sm text-black/55">Saved server courses will appear here.</p>
+            ) : (
+              courses.map((savedCourse) => (
+                <button
+                  key={savedCourse.id || savedCourse.slug}
+                  className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-[#f7f7f2] px-4 py-3 text-left"
+                  onClick={() => {
+                    setCourse(savedCourse);
+                    setActiveModule(0);
+                  }}
+                >
+                  <span>
+                    <strong className="block">{savedCourse.title}</strong>
+                    <span className="text-sm text-black/45">{savedCourse.modules?.length || 0} modules</span>
+                  </span>
+                  <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-[#173f35]">
+                    {savedCourse.status || "Draft"}
+                  </span>
+                </button>
+              ))
+            )}
+          </div>
+        </div>
       </section>
 
       <section className="grid gap-4 lg:grid-cols-[320px_1fr]">
