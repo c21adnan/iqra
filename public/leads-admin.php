@@ -4,14 +4,22 @@ declare(strict_types=1);
 session_start();
 
 $configPath = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'iqra-admin-config.php';
+$resetCodePath = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'iqra-admin-reset-code.php';
 $storagePath = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'iqra-leads.csv';
 $passwordHash = getenv('IQRA_ADMIN_PASSWORD_HASH') ?: '';
 if ($passwordHash === '' && file_exists($configPath)) {
     $storedHash = require $configPath;
     $passwordHash = is_string($storedHash) ? $storedHash : '';
 }
+$resetCodeHash = getenv('IQRA_ADMIN_RESET_CODE_HASH') ?: '';
+if ($resetCodeHash === '' && file_exists($resetCodePath)) {
+    $storedResetHash = require $resetCodePath;
+    $resetCodeHash = is_string($storedResetHash) ? $storedResetHash : '';
+}
 $isConfigured = $passwordHash !== '';
+$hasResetCode = $resetCodeHash !== '';
 $error = '';
+$message = '';
 
 function h(string $value): string
 {
@@ -68,6 +76,32 @@ if ($isConfigured && $_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['mode'] ??
     $error = 'The admin password is not correct.';
 }
 
+if ($isConfigured && $_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['mode'] ?? '') === 'reset') {
+    $resetCode = (string) ($_POST['reset_code'] ?? '');
+    $password = (string) ($_POST['password'] ?? '');
+    $confirmPassword = (string) ($_POST['confirm_password'] ?? '');
+
+    if (!$hasResetCode) {
+        $error = 'Password reset is not configured yet. Use cPanel recovery instructions below.';
+    } elseif (!password_verify($resetCode, $resetCodeHash)) {
+        $error = 'The reset code is not correct.';
+    } elseif (strlen($password) < 10) {
+        $error = 'Use at least 10 characters for the new admin password.';
+    } elseif ($password !== $confirmPassword) {
+        $error = 'The two password entries do not match.';
+    } else {
+        $newHash = password_hash($password, PASSWORD_DEFAULT);
+        $configBody = "<?php\nreturn " . var_export($newHash, true) . ";\n";
+        if (file_put_contents($configPath, $configBody, LOCK_EX) !== false) {
+            $_SESSION['iqra_admin'] = true;
+            $passwordHash = $newHash;
+            $message = 'The admin password was reset and you are signed in.';
+        } else {
+            $error = 'The reset code was valid, but the server could not update the private admin config file.';
+        }
+    }
+}
+
 if (isset($_GET['logout'])) {
     unset($_SESSION['iqra_admin']);
     header('Location: /leads-admin.php');
@@ -75,6 +109,7 @@ if (isset($_GET['logout'])) {
 }
 
 $isLoggedIn = $isConfigured && (($_SESSION['iqra_admin'] ?? false) === true);
+$showForgotPassword = $isConfigured && !$isLoggedIn && isset($_GET['forgot']);
 
 if ($isLoggedIn && isset($_GET['download'])) {
     if (!file_exists($storagePath)) {
@@ -127,7 +162,9 @@ $recentLeads = array_reverse(array_slice($leads, -25));
       th, td { border-bottom: 1px solid rgba(0,0,0,.08); padding: 14px 10px; text-align: left; vertical-align: top; }
       th { color: rgba(23,34,29,.48); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
       .error { background: #fff1ed; border-radius: 16px; color: #9a3412; padding: 14px 16px; }
+      .success { background: #e8f5ef; border-radius: 16px; color: #14532d; padding: 14px 16px; }
       .empty { background: #f7f7f2; border-radius: 20px; padding: 20px; }
+      .notice { background: #f7f7f2; border-radius: 20px; padding: 18px 20px; }
     </style>
   </head>
   <body>
@@ -163,6 +200,42 @@ $recentLeads = array_reverse(array_slice($leads, -25));
               <button type="submit">Create admin password</button>
             </form>
           </section>
+        <?php elseif ($showForgotPassword): ?>
+          <section class="card" style="margin-top: 24px;">
+            <p class="kicker">Password recovery</p>
+            <h2>Reset the admin password.</h2>
+            <?php if ($message !== ''): ?>
+              <p class="success"><?php echo h($message); ?></p>
+            <?php endif; ?>
+            <?php if ($error !== ''): ?>
+              <p class="error"><?php echo h($error); ?></p>
+            <?php endif; ?>
+            <?php if ($hasResetCode): ?>
+              <p>Enter the private reset code and choose a new admin password.</p>
+              <form method="post" action="/leads-admin.php?forgot=1">
+                <input type="hidden" name="mode" value="reset">
+                <input type="password" name="reset_code" placeholder="Private reset code" required>
+                <input type="password" name="password" placeholder="New admin password" required minlength="10">
+                <input type="password" name="confirm_password" placeholder="Confirm new password" required minlength="10">
+                <button type="submit">Reset admin password</button>
+              </form>
+            <?php else: ?>
+              <div class="notice">
+                <p><strong>No reset code is configured yet.</strong></p>
+                <p>
+                  To reset safely, open cPanel File Manager and rename or remove
+                  <code>/home/imranali/iqra-admin-config.php</code>. Then open this page again and create a new admin password.
+                </p>
+                <p>
+                  For future self-service resets, create a private file named
+                  <code>/home/imranali/iqra-admin-reset-code.php</code> that returns a PHP password hash for your reset code.
+                </p>
+              </div>
+            <?php endif; ?>
+            <div class="actions">
+              <a class="button secondary" href="/leads-admin.php">Back to admin sign-in</a>
+            </div>
+          </section>
         <?php elseif (!$isLoggedIn): ?>
           <section class="card" style="margin-top: 24px;">
             <p class="kicker">Protected leads</p>
@@ -175,6 +248,9 @@ $recentLeads = array_reverse(array_slice($leads, -25));
               <input type="password" name="password" placeholder="Admin password" required>
               <button type="submit">Open leads admin</button>
             </form>
+            <div class="actions">
+              <a class="button secondary" href="/leads-admin.php?forgot=1">Forgot password?</a>
+            </div>
           </section>
         <?php else: ?>
           <section class="grid stats">
