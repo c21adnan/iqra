@@ -19,6 +19,9 @@ export default function StudioPage() {
             provider; IQRA stores only lesson details and a small playback identifier.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
+            <Link className="rounded-xl bg-[#173f35] px-5 py-3 text-sm font-semibold text-white" href="/creator/">
+              Create a course
+            </Link>
             <Link className="rounded-xl bg-[#173f35] px-5 py-3 text-sm font-semibold text-white" href="/courses/">
               Preview student catalog
             </Link>

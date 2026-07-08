@@ -11,6 +11,9 @@ export default function CoursesPage() {
         <Link className="rounded-xl bg-[#173f35] px-4 py-2 text-sm font-semibold text-white" href="/studio/">
           Open Course Studio
         </Link>
+        <Link className="rounded-xl border border-black/15 bg-white px-4 py-2 text-sm font-semibold text-[#173f35]" href="/creator/">
+          Create course
+        </Link>
       </div>
 
       <section className="mt-10 grid gap-8 rounded-[2rem] border border-black/10 bg-white p-8 shadow-xl shadow-[#173f35]/5 lg:grid-cols-[1.05fr_0.95fr] lg:items-end">
