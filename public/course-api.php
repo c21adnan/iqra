@@ -119,14 +119,6 @@ function normalize_course(array $input, ?array $existing = null): array
     ];
 }
 
-if (!$isLoggedIn) {
-    send_json([
-        'ok' => false,
-        'authenticated' => false,
-        'message' => 'Sign in through leads admin before saving courses to the server.',
-    ], 401);
-}
-
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $courses = read_courses($storagePath);
 
@@ -141,6 +133,14 @@ if ($method === 'GET' && isset($_GET['public'])) {
         'storage' => 'json',
         'courses' => $published,
     ]);
+}
+
+if (!$isLoggedIn) {
+    send_json([
+        'ok' => false,
+        'authenticated' => false,
+        'message' => 'Sign in through leads admin before saving courses to the server.',
+    ], 401);
 }
 
 if ($method === 'GET') {
