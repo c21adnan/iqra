@@ -130,6 +130,19 @@ if (!$isLoggedIn) {
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $courses = read_courses($storagePath);
 
+if ($method === 'GET' && isset($_GET['public'])) {
+    $published = array_values(array_filter($courses, static function ($course): bool {
+        return is_array($course) && strtolower((string) ($course['status'] ?? '')) === 'published';
+    }));
+
+    send_json([
+        'ok' => true,
+        'authenticated' => false,
+        'storage' => 'json',
+        'courses' => $published,
+    ]);
+}
+
 if ($method === 'GET') {
     send_json([
         'ok' => true,

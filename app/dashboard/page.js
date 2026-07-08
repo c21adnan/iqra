@@ -65,6 +65,9 @@ export default function DashboardPage() {
               <Link className="text-sm font-semibold text-[#173f35]" href="/courses/">
                 View catalog
               </Link>
+              <Link className="text-sm font-semibold text-[#173f35]" href="/programs/">
+                Public programs
+              </Link>
             </div>
           </div>
           <div className="mt-5 grid gap-3">

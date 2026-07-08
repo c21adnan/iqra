@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-const blankLesson = { title: "", format: "Video", duration: "", access: "Included" };
+const blankLesson = { title: "", format: "Video", duration: "", access: "Included", mediaUrl: "", resourceUrl: "" };
 const starterCourse = {
   title: "My Training Program",
   audience: "New students",
@@ -13,8 +13,8 @@ const starterCourse = {
     {
       title: "Module 1: Foundation",
       lessons: [
-        { title: "Welcome and roadmap", format: "Video", duration: "8 min", access: "Free preview" },
-        { title: "First core concept", format: "Video", duration: "12 min", access: "Included" },
+        { title: "Welcome and roadmap", format: "Video", duration: "8 min", access: "Free preview", mediaUrl: "", resourceUrl: "" },
+        { title: "First core concept", format: "Video", duration: "12 min", access: "Included", mediaUrl: "", resourceUrl: "" },
       ],
     },
   ],
@@ -195,6 +195,12 @@ export default function CourseWorkspace() {
               <Field label="Who is it for?" value={course.audience} onChange={(value) => updateCourse("audience", value)} />
               <Field label="Main promise" value={course.promise} onChange={(value) => updateCourse("promise", value)} />
             </div>
+            <SelectField
+              label="Publish status"
+              value={course.status}
+              values={["Draft", "Published", "Archived"]}
+              onChange={(value) => updateCourse("status", value)}
+            />
             <label className="grid gap-2">
               <span className="text-sm font-semibold text-black/60">Course description</span>
               <textarea
@@ -221,6 +227,9 @@ export default function CourseWorkspace() {
             <button className="rounded-xl bg-[#dc9b68] px-4 py-2 text-sm font-semibold text-[#173f35]" onClick={saveToServer}>
               Save to server
             </button>
+            <a className="rounded-xl border border-white/25 px-4 py-2 text-sm font-semibold text-white" href="/programs/">
+              View public catalog
+            </a>
             <button className="rounded-xl bg-white px-4 py-2 text-sm font-semibold text-[#173f35]" onClick={saveDraft}>
               Save local
             </button>
@@ -315,32 +324,46 @@ export default function CourseWorkspace() {
               </div>
               <div className="mt-5 grid gap-3">
                 {selectedModule.lessons.map((lesson, lessonIndex) => (
-                  <div key={`${lesson.title}-${lessonIndex}`} className="grid gap-3 rounded-2xl bg-[#f7f7f2] p-4 lg:grid-cols-[1fr_130px_110px_130px_auto] lg:items-end">
-                    <Field
-                      label={`Lesson ${lessonIndex + 1}`}
-                      value={lesson.title}
-                      onChange={(value) => updateLesson(activeModule, lessonIndex, "title", value)}
-                    />
-                    <SelectField
-                      label="Format"
-                      value={lesson.format}
-                      values={["Video", "Workshop", "PDF", "Quiz", "Assignment", "Download"]}
-                      onChange={(value) => updateLesson(activeModule, lessonIndex, "format", value)}
-                    />
-                    <Field
-                      label="Length"
-                      value={lesson.duration}
-                      onChange={(value) => updateLesson(activeModule, lessonIndex, "duration", value)}
-                    />
-                    <SelectField
-                      label="Access"
-                      value={lesson.access}
-                      values={["Free preview", "Included", "Members only", "Drip release"]}
-                      onChange={(value) => updateLesson(activeModule, lessonIndex, "access", value)}
-                    />
-                    <button className="rounded-xl border border-black/10 bg-white px-3 py-3 text-sm font-semibold text-black/55" onClick={() => removeLesson(activeModule, lessonIndex)}>
-                      Remove
-                    </button>
+                  <div key={`${lesson.title}-${lessonIndex}`} className="grid gap-3 rounded-2xl bg-[#f7f7f2] p-4">
+                    <div className="grid gap-3 lg:grid-cols-[1fr_130px_110px_130px_auto] lg:items-end">
+                      <Field
+                        label={`Lesson ${lessonIndex + 1}`}
+                        value={lesson.title}
+                        onChange={(value) => updateLesson(activeModule, lessonIndex, "title", value)}
+                      />
+                      <SelectField
+                        label="Format"
+                        value={lesson.format}
+                        values={["Video", "Workshop", "PDF", "Quiz", "Assignment", "Download"]}
+                        onChange={(value) => updateLesson(activeModule, lessonIndex, "format", value)}
+                      />
+                      <Field
+                        label="Length"
+                        value={lesson.duration}
+                        onChange={(value) => updateLesson(activeModule, lessonIndex, "duration", value)}
+                      />
+                      <SelectField
+                        label="Access"
+                        value={lesson.access}
+                        values={["Free preview", "Included", "Members only", "Drip release"]}
+                        onChange={(value) => updateLesson(activeModule, lessonIndex, "access", value)}
+                      />
+                      <button className="rounded-xl border border-black/10 bg-white px-3 py-3 text-sm font-semibold text-black/55" onClick={() => removeLesson(activeModule, lessonIndex)}>
+                        Remove
+                      </button>
+                    </div>
+                    <div className="grid gap-3 lg:grid-cols-2">
+                      <Field
+                        label="Video or media URL"
+                        value={lesson.mediaUrl || ""}
+                        onChange={(value) => updateLesson(activeModule, lessonIndex, "mediaUrl", value)}
+                      />
+                      <Field
+                        label="Resource or download URL"
+                        value={lesson.resourceUrl || ""}
+                        onChange={(value) => updateLesson(activeModule, lessonIndex, "resourceUrl", value)}
+                      />
+                    </div>
                   </div>
                 ))}
               </div>
@@ -355,6 +378,9 @@ export default function CourseWorkspace() {
           <div>
             <h2 className="text-3xl font-semibold tracking-[-0.04em]">{course.title || "Untitled course"}</h2>
             <p className="mt-3 text-sm font-semibold text-[#173f35]">{course.audience}</p>
+            <p className="mt-2 inline-block rounded-full bg-[#f7f7f2] px-3 py-1 text-xs font-semibold text-black/45">
+              {course.status}
+            </p>
             <p className="mt-4 leading-7 text-black/60">{course.description}</p>
           </div>
           <div className="grid gap-3">
@@ -368,6 +394,11 @@ export default function CourseWorkspace() {
                       <span className="text-black/45">
                         {lesson.format} {lesson.duration ? `- ${lesson.duration}` : ""}
                       </span>
+                      {lesson.mediaUrl || lesson.resourceUrl ? (
+                        <span className="basis-full text-xs font-semibold text-[#8f4322]">
+                          {lesson.mediaUrl ? "Media attached" : ""} {lesson.resourceUrl ? "Resource attached" : ""}
+                        </span>
+                      ) : null}
                     </div>
                   ))}
                 </div>
